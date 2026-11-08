@@ -180,7 +180,7 @@ export default function QRCodeGenerator() {
           <h1 className='text-lg font-semibold'>QR Code Preview</h1>
         </div>
         <div>
-          <div style={{ height: 'auto', margin: '0 auto', maxWidth: 256, width: '100%' }}>
+          <div id="qr-code-container" style={{ height: 'auto', margin: '0 auto', maxWidth: 256, width: '100%' }}>
             <QRCode
               size={256}
               style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
