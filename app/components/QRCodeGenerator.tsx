@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import QRCode from 'react-qr-code';
 import {ClipboardCopy, Download} from 'lucide-react'
 import { jsPDF } from 'jspdf';
+import DownloadButton from './DownloadButton';
 
 export default function QRCodeGenerator() {
   const [text, setText] = useState('');
@@ -14,7 +15,6 @@ export default function QRCodeGenerator() {
     setText(inputVal);
   };
 
-  // Helper to extract SVG markup
   const getSvgElementAndString = () => {
     const svgElement = document.querySelector('#qr-code-container svg');
     if (!svgElement) return null;
@@ -22,7 +22,6 @@ export default function QRCodeGenerator() {
     return { svgElement, svgString };
   };
 
-  // 1. Download as SVG
   const handleDownloadSVG = () => {
     const data = getSvgElementAndString();
     if (!data) return;
@@ -38,7 +37,6 @@ export default function QRCodeGenerator() {
     URL.revokeObjectURL(url);
   };
 
-  // 2. Download as PNG
   const handleDownloadPNG = () => {
     const data = getSvgElementAndString();
     if (!data) return;
@@ -71,7 +69,6 @@ export default function QRCodeGenerator() {
     image.src = url;
   };
 
-  // 3. Download as PDF
   const handleDownloadPDF = () => {
     const data = getSvgElementAndString();
     if (!data) return;
@@ -93,22 +90,18 @@ export default function QRCodeGenerator() {
 
         const imgData = canvas.toDataURL('image/png');
         
-        // Initialize jsPDF (A4 size, portrait)
         const pdf = new jsPDF({
           orientation: 'portrait',
           unit: 'mm',
           format: 'a4',
         });
 
-        // Add title text
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(18);
         pdf.text('Generated QR Code', 105, 30, { align: 'center' });
 
-        // Embed QR Code image into the center of the PDF page (width: 60mm, height: 60mm)
         pdf.addImage(imgData, 'PNG', 75, 45, 60, 60);
 
-        // Save PDF file
         pdf.save('qrcode.pdf');
       }
       URL.revokeObjectURL(url);
@@ -156,6 +149,8 @@ export default function QRCodeGenerator() {
 
   return (
     <div className='w-full flex flex-col gap-10 m-10  sm:flex-row items-center sm:items-start sm:justify-between'>  
+      
+      {/* Forms */}
       <div className='w-full'>
         <form onSubmit={handleGenerate} className='flex flex-col gap-5'>
           <div className='flex flex-col gap-1'>
@@ -175,10 +170,13 @@ export default function QRCodeGenerator() {
         </form>
       </div>
 
+      {/* QR Code Container */}
       <div className='w-full flex flex-col gap-10 items-center bg-white rounded-2xl p-5 shadow-xs border border-black/20'>
         <div>
           <h1 className='text-lg font-semibold'>QR Code Preview</h1>
         </div>
+
+        {/* The QR Code itself */}
         <div>
           <div id="qr-code-container" style={{ height: 'auto', margin: '0 auto', maxWidth: 256, width: '100%' }}>
             <QRCode
@@ -189,41 +187,15 @@ export default function QRCodeGenerator() {
             />
           </div>
         </div>
+
+        {/* Download Buttons */}
         <div className='flex flex-col gap-2 justify-center items-center'>
           <div className='flex gap-2'>
-          <div className='w-20 h-20 border rounded border-black/20 active:scale-95 transition-all duration-150'>
-            <button 
-            onClick={handleCopy}
-            className='w-full h-full flex flex-col gap-2 justify-center items-center text-sm cursor-pointer'>
-              <ClipboardCopy size={18}/>
-              Copy
-            </button>
+            <DownloadButton title={'Copy'} icon={ClipboardCopy} handleclick={handleCopy}/>
+            <DownloadButton title={'SVG'} icon={Download} handleclick={handleDownloadSVG}/>
+            <DownloadButton title={'PNG'} icon={Download} handleclick={handleDownloadPNG}/>
+            <DownloadButton title={'PDF'} icon={Download} handleclick={handleDownloadPDF}/>
           </div>
-          <div className='w-20 h-20 border rounded border-black/20 active:scale-95 transition-all duration-150'>
-            <button 
-            onClick={handleDownloadPNG}
-            className='w-full h-full flex flex-col gap-2 justify-center items-center text-sm cursor-pointer'>
-              <Download size={18}/>
-              PNG
-            </button>
-          </div>
-          <div className='w-20 h-20 border rounded border-black/20 active:scale-95 transition-all duration-150'>
-            <button 
-            onClick={handleDownloadSVG}
-            className='w-full h-full flex flex-col gap-2 justify-center items-center text-sm cursor-pointer'>
-              <Download size={18}/>
-              SVG
-            </button>
-          </div>
-          <div className='w-20 h-20 border rounded border-black/20 active:scale-95 transition-all duration-150'>
-            <button 
-            onClick={handleDownloadPDF}
-            className='w-full h-full flex flex-col gap-2 justify-center items-center text-sm cursor-pointer'>
-              <Download size={18}/>
-              PDF
-            </button>
-          </div>
-        </div>
           <p className='text-black/60 text-sm'>Click any button to copy or download your qr code</p>
         </div>
       </div>
