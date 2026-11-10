@@ -316,7 +316,7 @@ export default function QRCodeGenerator() {
         </div>
 
         {/* The QR Code itself */}
-        <div className='w-full flex items-center justify-center min-h-[280px] p-4 bg-zinc-50/50 rounded-xl border border-dashed border-black/10'>
+        <div className='w-full flex items-center justify-center min-h-70 p-4 bg-zinc-50/50 rounded-xl border border-dashed border-black/10'>
           {text ? (
             <div
               id="qr-code-container"
